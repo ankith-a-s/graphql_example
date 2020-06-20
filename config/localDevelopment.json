@@ -1,0 +1,28 @@
+{
+    "db": {
+      "name": "dhiyo-assignment",
+      "host": "localhost",
+      "port": 27017
+    },
+    "api": {
+      "version": "v1",
+      "port": 4000,
+      "environment": "local"
+    },
+    "cors": {
+      "whitelist": ["https://localhost:3000"],
+      "allowLocal": true
+    },
+    "rateLimit": {
+      "minutes": 10,
+      "maxRequests": 100000000
+    },
+    "jwt": {
+      "secret": "66b905a8-d824-4432-a329-6088788n237d",
+      "expiresIn": "30d"
+    },
+    "logEnabled": true,
+    "logLevel": "info",
+    "resetPasswordTokenExpiry": 86400
+  }
+  
