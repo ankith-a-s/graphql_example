@@ -26,5 +26,8 @@
     "pino": "^5.12.2"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
 }
