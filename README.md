@@ -27,7 +27,7 @@ Available Routes for File
 
 Note: 
 1. All the routes are authenticated except /register-email-password and /login-by-email-password
-2. Please specify authorizationtoken in headers for all other api's (authorization token will be obtained from login api)
+2. Please specify field authorizationtoken in headers with the token for all other api's (authorization token will be obtained after you hit login api)
 
 Reset password flow
 Steps:
