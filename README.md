@@ -1,4 +1,21 @@
 # dhiyo_assignment
+
+GRAPHQL
+
+Note: For test purpose authentication middleware is set to fakeAuth, change authenticator._fakeAuth to authenticator._preAuth in app.js line 64 to test the authentication flow end to end .
+
+When app is initialized ,Creating fake user and when we set the authentication to fakeAuth the authentication will take that demo user else in preAuth it works normal
+
+Available mutations
+1. createFile
+2. changePassword
+3. loginByEmailAndPassword
+4. registerUserByEmailAndPassoword
+5. generateResetPasswordLink
+6. verifyResetPasswordToken
+
+REST
+
 This repository has the assignment by dhiyo
 
 Available Routes for User
