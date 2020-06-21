@@ -1,16 +1,20 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 // Define collection and schema
-let File = new Schema(
+let file = new Schema(
   {
     fileName: {
-      type: String
-    }
+      type: String,
+    },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'user',
+    },
   },
   {
-    collection: "file"
+    collection: 'file',
   }
 );
 
-module.exports = mongoose.model("File", File);
+module.exports = mongoose.model('file', file);

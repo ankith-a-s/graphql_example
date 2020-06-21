@@ -5,12 +5,12 @@ async function createUser(userData) {
 }
 
 async function findUserByEmail(emailId) {
-  return await Users.findOne({ email: emailId });
+  return await Users.findOne({ email: emailId }).populate('createFiles');
 }
 
 async function updateUserByUserId({ userData, userId, user }) {
   await Users.updateOne({ _id: userId }, { $set: userData });
-  let updatedUser = await Users.findOne({ email: user.email });
+  let updatedUser = await Users.findOne({ email: user.email }).populate('createFiles');
   return updatedUser;
 }
 

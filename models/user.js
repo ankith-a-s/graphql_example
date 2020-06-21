@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const mongoosePaginate = require('mongoose-paginate');
 
 const schema = new mongoose.Schema(
   {
@@ -17,6 +16,7 @@ const schema = new mongoose.Schema(
     },
     password: {
       type: String,
+      required: true,
     },
     reset_password_token: {
       type: String,
@@ -24,6 +24,12 @@ const schema = new mongoose.Schema(
     reset_password_expires: {
       type: Date,
     },
+    createFiles: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'file',
+      },
+    ],
     deleted: {
       type: Boolean,
       default: false,

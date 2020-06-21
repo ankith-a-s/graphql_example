@@ -18,6 +18,9 @@ const rateLimit = require('express-rate-limit');
 const authenticator = require('./controllers/auth');
 const logger = require('./lib/utils/logger');
 const db = require('./lib/utils/db');
+const graphqlHttp = require('express-graphql');
+const schema = require('./graphql/schema/index');
+const rootValue = require('./graphql/resolvers/index');
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }));
@@ -26,26 +29,30 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }));
 app.use(bodyParser.json({ limit: '50mb' }));
 
 /* Check CORS before proceeding further */
-app.use(cors({
-  origin: function(origin, callback) {
-    if (config.get('cors.whitelist').indexOf(origin) !== -1 ||
-      config.get('cors.allowLocal')) {
-      // error - null, allowOrigin - true
-      callback(null, true);
-    } else {
-      app.use(function(err, req, res) {
-        res.status(403).json({
-          success: false,
-          statusCode: 'NOT_ALLOWED_BY_CORS',
-          message: 'You are not allowed to access this resource',
-          data: {}
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (
+        config.get('cors.whitelist').indexOf(origin) !== -1 ||
+        config.get('cors.allowLocal')
+      ) {
+        // error - null, allowOrigin - true
+        callback(null, true);
+      } else {
+        app.use(function (err, req, res) {
+          res.status(403).json({
+            success: false,
+            statusCode: 'NOT_ALLOWED_BY_CORS',
+            message: 'You are not allowed to access this resource',
+            data: {},
+          });
         });
-      });
-      // error - true, allowOrigin - false
-      callback(true, false);
-    }
-  }
-}));
+        // error - true, allowOrigin - false
+        callback(true, false);
+      }
+    },
+  })
+);
 
 /* Add additional http flags in response header for security */
 app.use(helmet());
@@ -54,7 +61,16 @@ app.use(helmet());
 //app.use(interceptor);
 
 /* Add auth middleware */
-app.use(authenticator._preAuth); // use _fakeAuth when testing
+app.use(authenticator._fakeAuth); // use _fakeAuth when testing
+
+app.use(
+  '/graphql',
+  graphqlHttp({
+    schema: schema,
+    rootValue: rootValue,
+    graphiql: true,
+  })
+);
 
 /* Allow reverse proxy such as NginX, AWS ELB */
 app.enable('trust proxy');
@@ -67,8 +83,8 @@ const limiter = rateLimit({
     success: false,
     statusCode: 'TOO_MANY_REQUESTS',
     message: 'Too many requests, please try again later',
-    data: {}
-  }
+    data: {},
+  },
 });
 app.use(limiter);
 
@@ -81,14 +97,14 @@ function loadRoutes() {
 }
 
 function loadModels() {
-  glob.sync('./models/**/*.js').forEach(function(file) {
+  glob.sync('./models/**/*.js').forEach(function (file) {
     require(path.resolve(file));
   });
 }
 
 /* Default response for 404 errors */
 function handle404Error() {
-  app.use(function(req, res) {
+  app.use(function (req, res) {
     res.status(404).json({
       success: false,
       message: 'The requested end point does not exist',
@@ -119,7 +135,6 @@ async function initialize() {
 
   await startServer();
   app.isAppInitialized = true;
-
 }
 
 app.initialize = initialize;

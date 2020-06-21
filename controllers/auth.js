@@ -13,7 +13,7 @@ async function verifyResetPasswordToken({ user, token }) {
     bcrypt.compareSync(token, user.reset_password_token) &&
     now.isBefore(user.reset_password_expires)
   ) {
-    return { user };
+    return { ...user._doc, _id: user.id };
   }
   return false;
 }
@@ -141,10 +141,9 @@ async function _loginByEmailAndPassword(req, res) {
 }
 
 async function _registerByEmailAndPassword(req, res) {
-  const hash = bcrypt.hashSync(req.body.password, 10);
-
   try {
-    const { email } = req.body;
+    const { email, password } = req.body;
+    const hash = bcrypt.hashSync(password, 10);
     // first check is
     // create a new user with the password hash from bcrypt
     const userData = {
@@ -164,15 +163,13 @@ async function _registerByEmailAndPassword(req, res) {
       success: true,
       statusCode: 'USER_AUTHENTICATED',
       message: 'User Registration successfull',
-      data: {
-        user: user,
-      },
+      data: user,
     });
   } catch (err) {
     return res.status(401).json({
       success: false,
       statusCode: 'User Registration Failed',
-      message: 'Email Id already exists',
+      message: 'User registration failed',
     });
   }
 }
@@ -216,6 +213,7 @@ async function _preAuth(req, res, next) {
     req.path === `/${config.get('api.version')}/register-email-password` ||
     req.path === `/${config.get('api.version')}/login-by-email-password`
   ) {
+    req.isAuth = false
     return next();
   }
 
@@ -245,9 +243,11 @@ async function _preAuth(req, res, next) {
     }
 
     req.user = existingUser;
+    req.isAuth = true
 
     next();
   } catch (error) {
+    req.isAuth = false
     logger.error({
       description: 'Error in preauthentication',
       error,
@@ -266,6 +266,7 @@ async function _preAuth(req, res, next) {
 async function _fakeAuth(req, res, next) {
   let user = await UserController.findUserByEmail('admin@dhiyo.com');
   req.user = user;
+  req.isAuth = true
   next();
 }
 
