@@ -2,7 +2,8 @@
 
 GRAPHQL
 
-Note: For test purpose authentication middleware is set to fakeAuth, change authenticator._fakeAuth to authenticator._preAuth in app.js line 64 to test the authentication flow end to end 
+Note: For test purpose authentication middleware is set to fakeAuth, change authenticator._fakeAuth to authenticator._preAuth in app.js line 64 to test the authentication flow end to end .
+
 When app is initialized ,Creating fake user and when we set the authentication to fakeAuth the authentication will take that demo user else in preAuth it works normal
 
 Available mutations
