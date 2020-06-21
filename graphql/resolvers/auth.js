@@ -23,10 +23,14 @@ module.exports = {
   },
   changePassword: async ({ userInput: { email, password } }, req) => {
     if (!req.isAuth) throw new Error('Unauthorized request');
-    const updatedUser = await postRequestByUrl('change-password', {
-      email: email,
-      password: password,
-    });
+    const updatedUser = await postRequestByUrl(
+      'change-password',
+      {
+        email: email,
+        password: password,
+      },
+      req.headers['authorizationtoken']
+    );
     return transformUser(updatedUser);
   },
   generateResetPasswordLink: async ({ emailInput: { email } }, req) => {
@@ -35,19 +39,27 @@ module.exports = {
       'generate-reset-password-link',
       {
         email: email,
-      }
+      },
+      req.headers['authorizationtoken']
     );
     return {
       token: token,
       user: transformUser(user),
     };
   },
-  verifyResetPasswordToken: async ({ emailTokenInput: { email, token } },req) => {
+  verifyResetPasswordToken: async (
+    { emailTokenInput: { email, token } },
+    req
+  ) => {
     if (!req.isAuth) throw new Error('Unauthorized request');
-    const updatedUser = await postRequestByUrl('verify-reset-password-token', {
-      email: email,
-      token: token,
-    });
+    const updatedUser = await postRequestByUrl(
+      'verify-reset-password-token',
+      {
+        email: email,
+        token: token,
+      },
+      req.headers['authorizationtoken']
+    );
     return transformUser(updatedUser);
   },
 };
